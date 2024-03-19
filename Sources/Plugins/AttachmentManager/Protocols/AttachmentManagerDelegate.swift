@@ -45,7 +45,15 @@ public protocol AttachmentManagerDelegate: AnyObject {
     ///   - attachment: The attachment that was inserted
     ///   - index: The index of the attachment in the AttachmentManager's attachments array
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int)
-    
+
+    /// Notifys when an attachment has been replaced from the AttachmentManager
+    ///
+    /// - Parameters:
+    ///   - manager: The AttachmentManager
+    ///   - attachment: The attachment that was replaced
+    ///   - index: The index of the attachment in the AttachmentManager's attachments array
+    func attachmentManager(_ manager: AttachmentManager, didReplace attachment: AttachmentManager.Attachment, at index: Int)
+
     /// Notifys when an attachment has been removed from the AttachmentManager
     ///
     /// - Parameters:
@@ -72,7 +80,9 @@ public protocol AttachmentManagerDelegate: AnyObject {
 public extension AttachmentManagerDelegate {
     
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {}
-    
+
+    func attachmentManager(_ manager: AttachmentManager, didReplace attachment: AttachmentManager.Attachment, at index: Int) {}
+
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {}
     
     func attachmentManager(_ manager: AttachmentManager, didReloadTo attachments: [AttachmentManager.Attachment]) {}

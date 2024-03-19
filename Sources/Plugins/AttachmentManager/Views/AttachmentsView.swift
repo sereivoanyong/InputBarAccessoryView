@@ -49,11 +49,7 @@ open class AttachmentCollectionView: UICollectionView {
     public init() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 0
-        layout.sectionInset.top = 5
-        layout.sectionInset.bottom = 5
-        layout.headerReferenceSize = CGSize(width: 12, height: 0)
-        layout.footerReferenceSize = CGSize(width: 12, height: 0)
+        layout.minimumLineSpacing = 10
         super.init(frame: .zero, collectionViewLayout: layout)
         setup()
     }
@@ -78,7 +74,8 @@ open class AttachmentCollectionView: UICollectionView {
             backgroundColor = .white
         }
         alwaysBounceHorizontal = true
-        showsHorizontalScrollIndicator = true
+        showsHorizontalScrollIndicator = false
+        showsVerticalScrollIndicator = false
         setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .vertical)
         register(AttachmentCell.self, forCellWithReuseIdentifier: AttachmentCell.reuseIdentifier)
         register(ImageAttachmentCell.self, forCellWithReuseIdentifier: ImageAttachmentCell.reuseIdentifier)

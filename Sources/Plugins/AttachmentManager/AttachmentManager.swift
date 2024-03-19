@@ -70,7 +70,9 @@ open class AttachmentManager: NSObject, InputPlugin {
             return .systemBlue
         }
     }
-    
+
+    open var allowsMultipleAttachments: Bool = true
+
     // MARK: - Initialization
     
     public override init() {
@@ -106,7 +108,15 @@ open class AttachmentManager: NSObject, InputPlugin {
             return false
         }
         
-        insertAttachment(attachment, at: attachments.count)
+        if allowsMultipleAttachments {
+            insertAttachment(attachment, at: attachments.count)
+        } else {
+            if attachments.isEmpty {
+                insertAttachment(attachment, at: attachments.count)
+            } else {
+                replaceAttachment(attachment, at: 0)
+            }
+        }
         return true
     }
     
@@ -126,7 +136,22 @@ open class AttachmentManager: NSObject, InputPlugin {
             self.delegate?.attachmentManager(self, shouldBecomeVisible: self.attachments.count > 0 || self.isPersistent)
         })
     }
-    
+
+    /// Performs an animated modification of an attachment at an index
+    ///
+    /// - Parameter index: The index to remove the attachment at
+    open func replaceAttachment(_ attachment: Attachment, at index: Int) {
+
+        attachmentView.performBatchUpdates({
+            self.attachments[index] = attachment
+            self.attachmentView.reloadItems(at: [IndexPath(row: index, section: 0)])
+        }, completion: { success in
+            self.attachmentView.reloadData()
+            self.delegate?.attachmentManager(self, didReplace: attachment, at: index)
+            self.delegate?.attachmentManager(self, shouldBecomeVisible: self.attachments.count > 0 || self.isPersistent)
+        })
+    }
+
     /// Performs an animated removal of an attachment at an index
     ///
     /// - Parameter index: The index to remove the attachment at
@@ -189,7 +214,9 @@ extension AttachmentManager: UICollectionViewDataSource, UICollectionViewDelegat
                 cell.manager = self
                 cell.imageView.image = image
                 cell.imageView.tintColor = tintColor
-                cell.deleteButton.backgroundColor = tintColor
+                if #unavailable(iOS 13.0) {
+                    cell.deleteButton.backgroundColor = tintColor
+                }
                 return cell
             default:
                 return collectionView.dequeueReusableCell(withReuseIdentifier: AttachmentCell.reuseIdentifier, for: indexPath) as! AttachmentCell
@@ -199,8 +226,16 @@ extension AttachmentManager: UICollectionViewDataSource, UICollectionViewDelegat
     }
     
     // MARK: - UICollectionViewDelegateFlowLayout
-    
-    final public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+
+    final public func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        var inset = (layout as! UICollectionViewFlowLayout).sectionInset
+        let layoutMargins = collectionView.layoutMargins
+        inset.left = layoutMargins.left
+        inset.right = layoutMargins.right
+        return inset
+    }
+
+    final public func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         var height = attachmentView.intrinsicContentHeight
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {

@@ -48,25 +48,34 @@ open class AttachmentCell: UICollectionViewCell {
         return view
     }()
     
-    open var padding: UIEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5) {
+    open var padding: UIEdgeInsets = .zero {
         didSet {
             updateContainerPadding()
         }
     }
     
     open lazy var deleteButton: UIButton = { [weak self] in
-        let button = UIButton()
-        let textColor: UIColor
-        if #available(iOS 13, *) {
-            textColor = .systemBackground
+        let button: UIButton
+        if #available(iOS 15.0, *) {
+            var configuration = UIButton.Configuration.plain()
+            configuration.background.backgroundColor = .systemFill
+            configuration.cornerStyle = .capsule
+            configuration.image = UIImage(systemName: "xmark")?.withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .bold, scale: .small))
+            button = UIButton(configuration: configuration)
+            button.tintColor = .white
+            button.overrideUserInterfaceStyle = .light
+        } else if #available(iOS 13, *) {
+            button = UIButton(type: .close)
         } else {
-            textColor = .white
+            button = UIButton()
+            let textColor: UIColor = .white
+            button.setAttributedTitle(NSMutableAttributedString().bold("X", fontSize: 15, textColor: textColor), for: .normal)
+            button.setAttributedTitle(NSMutableAttributedString().bold("X", fontSize: 15, textColor: textColor.withAlphaComponent(0.5)), for: .highlighted)
+            button.layer.cornerRadius = 10
+            button.clipsToBounds = true
+            button.backgroundColor = .systemBlue
         }
-        button.setAttributedTitle(NSMutableAttributedString().bold("X", fontSize: 15, textColor: textColor), for: .normal)
-        button.setAttributedTitle(NSMutableAttributedString().bold("X", fontSize: 15, textColor: textColor.withAlphaComponent(0.5)), for: .highlighted)
-        button.layer.cornerRadius = 10
-        button.clipsToBounds = true
-        button.backgroundColor = .systemBlue
+
         button.addTarget(self, action: #selector(deleteAttachment), for: .touchUpInside)
         return button
     }()
@@ -120,7 +129,11 @@ open class AttachmentCell: UICollectionViewCell {
             left:   containerView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: padding.left),
             right:  containerView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -padding.right)
         ).activate()
-        deleteButton.addConstraints(contentView.topAnchor, right: contentView.rightAnchor, widthConstant: 20, heightConstant: 20)
+        if #available(iOS 13, *) {
+            deleteButton.addConstraints(contentView.topAnchor, right: contentView.rightAnchor, topConstant: 6, rightConstant: 6)
+        } else {
+            deleteButton.addConstraints(contentView.topAnchor, right: contentView.rightAnchor, widthConstant: 20, heightConstant: 20)
+        }
     }
     
     private func updateContainerPadding() {
