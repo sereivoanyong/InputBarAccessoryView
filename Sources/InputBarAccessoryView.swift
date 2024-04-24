@@ -40,7 +40,6 @@ open class InputBarAccessoryView: UIView {
     open var backgroundView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = InputBarAccessoryView.defaultBackgroundColor
         return view
     }()
     
@@ -52,35 +51,6 @@ open class InputBarAccessoryView: UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
-    /**
-     A UIVisualEffectView that adds a blur effect to make the view appear transparent.
-     
-     ## Important Notes ##
-     1. The blurView is initially not added to the backgroundView to improve performance when not needed. When `isTranslucent` is set to TRUE for the first time the blurView is added and anchored to the `backgroundView`s edge anchors
-    */
-    open lazy var blurView: UIVisualEffectView = {
-        var blurEffect = UIBlurEffect(style: .light)
-        if #available(iOS 13, *) {
-            blurEffect = UIBlurEffect(style: .systemMaterial)
-        }
-        let view = UIVisualEffectView(effect: blurEffect)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    /// Determines if the InputBarAccessoryView should have a translucent effect
-    open var isTranslucent: Bool = false {
-        didSet {
-            if isTranslucent && blurView.superview == nil {
-                backgroundView.addSubview(blurView)
-                blurView.fillSuperview()
-            }
-            blurView.isHidden = !isTranslucent
-            let color: UIColor = backgroundView.backgroundColor ?? InputBarAccessoryView.defaultBackgroundColor
-            backgroundView.backgroundColor = isTranslucent ? color.withAlphaComponent(0.75) : color
-        }
-    }
 
     /// A SeparatorLine that is anchored at the top of the InputBarAccessoryView
     public let separatorLine = SeparatorLine()
@@ -140,14 +110,6 @@ open class InputBarAccessoryView: UIView {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
-    }()
-
-    private static let defaultBackgroundColor: UIColor = {
-        if #available(iOS 13, *) {
-            return .systemBackground
-        } else {
-            return .white
-        }
     }()
     
     /// The InputTextView a user can input a message in
@@ -391,8 +353,6 @@ open class InputBarAccessoryView: UIView {
     
     /// Sets up the default properties
     open func setup() {
-
-        backgroundColor = InputBarAccessoryView.defaultBackgroundColor
         autoresizingMask = [.flexibleHeight]
         setupSubviews()
         setupConstraints()
