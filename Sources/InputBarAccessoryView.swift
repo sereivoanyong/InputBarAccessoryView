@@ -52,9 +52,21 @@ open class InputBarAccessoryView: UIView {
         return view
     }()
 
+    public var showsSeparator: Bool = false {
+        didSet {
+            separatorLine.isHidden = !showsSeparator
+        }
+    }
     /// A SeparatorLine that is anchored at the top of the InputBarAccessoryView
-    public let separatorLine = SeparatorLine()
-    
+    lazy public private(set) var separatorLine: SeparatorLine = {
+        let separatorLine = SeparatorLine()
+        separatorLine.isHidden = true
+        insertSubview(separatorLine, aboveSubview: contentView)
+
+        separatorLine.addConstraints(topAnchor, left: backgroundView.leftAnchor, right: backgroundView.rightAnchor, heightConstant: separatorLine.height)
+        return separatorLine
+    }()
+
     /**
      The InputStackView at the InputStackView.top position
      
@@ -393,7 +405,6 @@ open class InputBarAccessoryView: UIView {
         addSubview(backgroundView)
         addSubview(topStackView)
         addSubview(contentView)
-        addSubview(separatorLine)
         contentView.addSubview(middleContentViewWrapper)
         contentView.addSubview(leftStackView)
         contentView.addSubview(rightStackView)
@@ -407,8 +418,6 @@ open class InputBarAccessoryView: UIView {
     private func setupConstraints() {
         
         // The constraints within the InputBarAccessoryView
-        separatorLine.addConstraints(topAnchor, left: backgroundView.leftAnchor, right: backgroundView.rightAnchor, heightConstant: separatorLine.height)
-
         backgroundViewLayoutSet = NSLayoutConstraintSet(
             top: backgroundView.topAnchor.constraint(equalTo: topStackView.bottomAnchor),
             bottom: backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor),
