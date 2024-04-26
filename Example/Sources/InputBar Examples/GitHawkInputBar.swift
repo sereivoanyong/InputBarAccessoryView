@@ -24,12 +24,12 @@ final class GitHawkInputBar: InputBarAccessoryView {
     
     func configure() {
         inputTextView.placeholder = "Leave a comment"
-        sendButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        sendButton.setSize(CGSize(width: 36, height: 36), animated: false)
-        sendButton.image = #imageLiteral(resourceName: "ic_send").withRenderingMode(.alwaysTemplate)
-        sendButton.title = nil
-        sendButton.tintColor = tintColor
-        
+        sendButtonItem.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        sendButtonItem.overrideSize = CGSize(width: 36, height: 36)
+        sendButtonItem.setImage(#imageLiteral(resourceName: "ic_send").withRenderingMode(.alwaysTemplate), for: .normal)
+        sendButtonItem.setTitle(nil, for: .normal)
+        sendButtonItem.tintColor = tintColor
+
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 20, height: 20)

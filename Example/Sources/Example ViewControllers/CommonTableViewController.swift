@@ -143,13 +143,13 @@ extension CommonTableViewController: InputBarAccessoryViewDelegate {
         inputBar.invalidatePlugins()
 
         // Send button activity animation
-        inputBar.sendButton.startAnimating()
+        inputBar.sendButtonItem.startAnimating()
         inputBar.inputTextView.placeholder = "Sending..."
         DispatchQueue.global(qos: .default).async {
             // fake send request task
             sleep(1)
             DispatchQueue.main.async { [weak self] in
-                inputBar.sendButton.stopAnimating()
+                inputBar.sendButtonItem.stopAnimating()
                 inputBar.inputTextView.placeholder = "Aa"
                 self?.conversation.messages.append(SampleData.Message(user: SampleData.shared.currentUser, text: text))
                 let indexPath = IndexPath(row: (self?.conversation.messages.count ?? 1) - 1, section: 0)
@@ -213,15 +213,15 @@ extension CommonTableViewController: AttachmentManagerDelegate {
     }
     
     func attachmentManager(_ manager: AttachmentManager, didReloadTo attachments: [AttachmentManager.Attachment]) {
-        inputBar.sendButton.isEnabled = manager.attachments.count > 0
+        inputBar.sendButtonItem.isEnabled = manager.attachments.count > 0
     }
     
     func attachmentManager(_ manager: AttachmentManager, didInsert attachment: AttachmentManager.Attachment, at index: Int) {
-        inputBar.sendButton.isEnabled = manager.attachments.count > 0
+        inputBar.sendButtonItem.isEnabled = manager.attachments.count > 0
     }
     
     func attachmentManager(_ manager: AttachmentManager, didRemove attachment: AttachmentManager.Attachment, at index: Int) {
-        inputBar.sendButton.isEnabled = manager.attachments.count > 0
+        inputBar.sendButtonItem.isEnabled = manager.attachments.count > 0
     }
     
     func attachmentManager(_ manager: AttachmentManager, didSelectAddAttachmentAt index: Int) {

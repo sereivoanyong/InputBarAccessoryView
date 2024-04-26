@@ -27,7 +27,18 @@
 
 import UIKit
 
-open class InputBarSendButton: InputBarButtonItem {
+public protocol ButtonProtocol: UIButton {
+
+    var overrideSize: CGSize? { get set }
+}
+
+public protocol AnimatableInputBarButtonItem: ButtonProtocol, InputBarItem {
+
+    func startAnimating()
+    func stopAnimating()
+}
+
+open class InputBarSendButtonItem: InputBarButtonItem, AnimatableInputBarButtonItem {
 
     /// A flag indicating the animation state of the `InputBarSendButton`
     open private(set) var isAnimating: Bool = false

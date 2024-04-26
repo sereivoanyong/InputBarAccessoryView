@@ -29,7 +29,7 @@ final class FacebookInputBar: InputBarAccessoryView {
                 item.inputBarAccessoryView?.setLeftStackViewWidthConstant(to: 36, animated: true)
             }
         }
-        button.setSize(CGSize(width: 36, height: 36), animated: false)
+        button.overrideSize = CGSize(width: 36, height: 36)
         button.setImage(#imageLiteral(resourceName: "ic_plus").withRenderingMode(.alwaysTemplate), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         button.tintColor = .systemBlue

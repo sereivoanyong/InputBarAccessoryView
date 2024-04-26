@@ -133,17 +133,7 @@ open class InputBarAccessoryView: UIView {
     }()
     
     /// A InputBarButtonItem used as the send button and initially placed in the rightStackView
-    open var sendButton: InputBarSendButton = {
-        return InputBarSendButton()
-            .configure {
-                $0.setSize(CGSize(width: 52, height: 36), animated: false)
-                $0.isEnabled = false
-                $0.title = "Send"
-                $0.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
-            }.onTouchUpInside {
-                $0.inputBarAccessoryView?.didSelectSendButton()
-        }
-    }()
+    lazy open private(set) var sendButtonItem: AnimatableInputBarButtonItem = makeSendButtonItem()
 
     /**
      The anchor contants used to add horizontal inset from the InputBarAccessoryView and the
@@ -296,22 +286,22 @@ open class InputBarAccessoryView: UIView {
     open var inputPlugins = [InputPlugin]()
 
     /// The InputBarItems held in the leftStackView
-    public private(set) var leftStackViewItems: [InputItem] = []
-    
+    public private(set) var leftStackViewItems: [InputBarItem] = []
+
     /// The InputBarItems held in the rightStackView
-    public private(set) var rightStackViewItems: [InputItem] = []
-    
+    public private(set) var rightStackViewItems: [InputBarItem] = []
+
     /// The InputBarItems held in the bottomStackView
-    public private(set) var bottomStackViewItems: [InputItem] = []
-    
+    public private(set) var bottomStackViewItems: [InputBarItem] = []
+
     /// The InputBarItems held in the topStackView
-    public private(set) var topStackViewItems: [InputItem] = []
-    
+    public private(set) var topStackViewItems: [InputBarItem] = []
+
     /// The InputBarItems held to make use of their hooks but they are not automatically added to a UIStackView
-    open var nonStackViewItems: [InputItem] = []
-    
+    open var nonStackViewItems: [InputBarItem] = []
+
     /// Returns a flatMap of all the items in each of the UIStackViews
-    public var items: [InputItem] {
+    public var items: [InputBarItem] {
         return [leftStackViewItems, rightStackViewItems, bottomStackViewItems, topStackViewItems, nonStackViewItems].flatMap { $0 }
     }
 
@@ -361,6 +351,18 @@ open class InputBarAccessoryView: UIView {
         setupConstraints(to: window)
     }
     
+    open func makeSendButtonItem() -> AnimatableInputBarButtonItem {
+        return InputBarSendButtonItem()
+            .configure {
+                $0.overrideSize = CGSize(width: 52, height: 36)
+                $0.isEnabled = false
+                $0.setTitle("Send", for: .normal)
+                $0.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+            }.onTouchUpInside {
+                $0.inputBarAccessoryView?.didSelectSendButton()
+            }
+    }
+
     // MARK: - Setup
     
     /// Sets up the default properties
@@ -411,7 +413,7 @@ open class InputBarAccessoryView: UIView {
         contentView.addSubview(bottomStackView)
         middleContentViewWrapper.addSubview(inputTextView)
         middleContentView = inputTextView
-        setStackViewItems([sendButton], forStack: .right, animated: false)
+        setStackViewItems([sendButtonItem], forStack: .right, animated: false)
     }
     
     /// Sets up the initial constraints of each subview
@@ -688,7 +690,7 @@ open class InputBarAccessoryView: UIView {
     ///   - items: New InputStackView arranged views
     ///   - position: The targeted InputStackView
     ///   - animated: If the layout should be animated
-    open func setStackViewItems(_ items: [InputItem], forStack position: InputStackView.Position, animated: Bool) {
+    open func setStackViewItems(_ items: [InputBarItem], forStack position: InputStackView.Position, animated: Bool) {
         
         func setNewItems() {
             switch position {
@@ -846,7 +848,7 @@ open class InputBarAccessoryView: UIView {
                 // The images property is more resource intensive so only use it if needed
                 isEnabled = inputTextView.images.count > 0
             }
-            sendButton.isEnabled = isEnabled
+            sendButtonItem.isEnabled = isEnabled
         }
         
         // Capture change before iterating over the InputItem's

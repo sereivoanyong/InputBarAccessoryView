@@ -21,7 +21,7 @@ final class SlackInputBar: InputBarAccessoryView {
     }
     
     func configure() {
-        let items = [
+        let items: [InputBarButtonItem] = [
             makeButton(named: "ic_camera").onTextViewDidChange { button, textView in
                 button.isEnabled = textView.text.isEmpty
                 }.onSelected {
@@ -44,14 +44,14 @@ final class SlackInputBar: InputBarAccessoryView {
                     imagePicker.sourceType = .photoLibrary
                     (UIApplication.shared.delegate as? AppDelegate)?.window?.rootViewController?.present(imagePicker, animated: true, completion: nil)
             },
-            sendButton
+            (sendButtonItem as! InputBarSendButtonItem)
                 .configure {
                     $0.layer.cornerRadius = 8
                     $0.layer.borderWidth = 1.5
                     $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
                     $0.setTitleColor(.white, for: .normal)
                     $0.setTitleColor(.white, for: .highlighted)
-                    $0.setSize(CGSize(width: 52, height: 30), animated: false)
+                    $0.overrideSize = CGSize(width: 52, height: 30)
                 }.onDisabled {
                     $0.layer.borderColor = $0.titleColor(for: .disabled)?.cgColor
                     $0.backgroundColor = .clear
@@ -75,7 +75,7 @@ final class SlackInputBar: InputBarAccessoryView {
             .configure {
                 $0.image = UIImage(named: "icons8-expand")?.withRenderingMode(.alwaysTemplate)
                 $0.tintColor = .darkGray
-                $0.setSize(CGSize(width: 20, height: 20), animated: false)
+                $0.overrideSize = CGSize(width: 20, height: 20)
             }.onSelected {
                 let oldValue = $0.inputBarAccessoryView?.shouldForceTextViewMaxHeight ?? false
                 $0.image = oldValue ? UIImage(named: "icons8-expand")?.withRenderingMode(.alwaysTemplate) : UIImage(named: "icons8-collapse")?.withRenderingMode(.alwaysTemplate)
@@ -97,8 +97,8 @@ final class SlackInputBar: InputBarAccessoryView {
         return InputBarButtonItem()
             .configure {
                 $0.spacing = .fixed(10)
-                $0.image = UIImage(named: named)?.withRenderingMode(.alwaysTemplate)
-                $0.setSize(CGSize(width: 30, height: 30), animated: false)
+                $0.setImage(UIImage(named: named)?.withRenderingMode(.alwaysTemplate), for: .normal)
+                $0.overrideSize = CGSize(width: 30, height: 30)
             }.onSelected {
                 $0.tintColor = .systemBlue
             }.onDeselected {

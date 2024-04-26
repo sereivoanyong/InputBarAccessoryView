@@ -14,8 +14,8 @@ class ButtonAnimationExample: InputAccessoryExampleViewController {
     var isShowingSendButton: Bool = true {
         didSet {
             if oldValue != isShowingSendButton {
-                inputBar.sendButton.frame.origin.y = inputBar.rightStackView.frame.height / 2
-                self.inputBar.sendButton.setSize(isShowingSendButton ? CGSize(width: 38, height: 38) : .zero, animated: true)
+                inputBar.sendButtonItem.frame.origin.y = inputBar.rightStackView.frame.height / 2
+                inputBar.sendButtonItem.overrideSize = isShowingSendButton ? CGSize(width: 38, height: 38) : .zero
             }
         }
     }

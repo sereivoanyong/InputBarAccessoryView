@@ -27,9 +27,9 @@
 
 import UIKit
 
-/// InputItem is a protocol that links elements to the InputBarAccessoryView to make them reactive
-public protocol InputItem: AnyObject {
-    
+/// InputBarItem is a protocol that links elements to the InputBarAccessoryView to make them reactive
+public protocol InputBarItem: AnyObject {
+
     /// A weak reference to the InputBarAccessoryView. Set when inserted into an InputStackView
     var inputBarAccessoryView: InputBarAccessoryView? { get set }
     

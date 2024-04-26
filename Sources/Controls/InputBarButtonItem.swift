@@ -33,7 +33,7 @@ import UIKit
  ## Important Notes ##
  1. Intended to be used in an `InputStackView`
  */
-open class InputBarButtonItem: UIButton, InputItem {
+open class InputBarButtonItem: UIButton, ButtonProtocol, InputBarItem {
     
     /// The spacing properties of the InputBarButtonItem
     ///
@@ -68,15 +68,17 @@ open class InputBarButtonItem: UIButton, InputItem {
         }
     }
     
-    /// When not nil this size overrides the intrinsicContentSize
-    private var size: CGSize? = CGSize(width: 20, height: 20) {
+    /// Sets the size of the InputBarButtonItem which overrides the intrinsicContentSize. When set to nil
+    /// the default intrinsicContentSize is used. The new size will be laid out in the UIStackView that
+    /// the InputBarButtonItem is held in
+    open var overrideSize: CGSize? = CGSize(width: 20, height: 20) {
         didSet {
             invalidateIntrinsicContentSize()
         }
     }
     
     open override var intrinsicContentSize: CGSize {
-        var contentSize = size ?? super.intrinsicContentSize
+        var contentSize = overrideSize ?? super.intrinsicContentSize
         switch spacing {
         case .fixed(let width):
             contentSize.width += width
@@ -183,24 +185,6 @@ open class InputBarButtonItem: UIButton, InputItem {
         }
         adjustsImageWhenHighlighted = false
         addTarget(self, action: #selector(InputBarButtonItem.touchUpInsideAction), for: .touchUpInside)
-    }
-    
-    // MARK: - Size Adjustment
-    
-    /// Sets the size of the InputBarButtonItem which overrides the intrinsicContentSize. When set to nil
-    /// the default intrinsicContentSize is used. The new size will be laid out in the UIStackView that
-    /// the InputBarButtonItem is held in
-    ///
-    /// - Parameters:
-    ///   - newValue: The new size
-    ///   - animated: If the layout should be animated
-    open func setSize(_ newValue: CGSize?, animated: Bool) {
-        size = newValue
-        if animated, let position = parentStackViewPosition {
-            inputBarAccessoryView?.performLayout(animated) { [weak self] in
-                self?.inputBarAccessoryView?.layoutStackViews([position])
-            }
-        }
     }
     
     // MARK: - Hook Setup Methods
@@ -343,7 +327,7 @@ open class InputBarButtonItem: UIButton, InputItem {
     /// An InputBarButtonItem that's spacing property is set to be .flexible
     public static var flexibleSpace: InputBarButtonItem {
         let item = InputBarButtonItem()
-        item.setSize(.zero, animated: false)
+        item.overrideSize = .zero
         item.spacing = .flexible
         return item
     }
@@ -351,7 +335,7 @@ open class InputBarButtonItem: UIButton, InputItem {
     /// An InputBarButtonItem that's spacing property is set to be .fixed with the width arguement
     public static func fixedSpace(_ width: CGFloat) -> InputBarButtonItem {
         let item = InputBarButtonItem()
-        item.setSize(.zero, animated: false)
+        item.overrideSize = .zero
         item.spacing = .fixed(width)
         return item
     }
